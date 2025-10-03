@@ -1,0 +1,8 @@
+npm init -y
+    projeyi kurduk
+
+npm install express axios cors dotenv
+    express → REST API kurmak için
+    axios → altın fiyatı almak için
+    cors → frontend’ten fetch yapabilmek için (Cross-Origin Resource Sharing)
+    dotenv → .env dosyasından API key ve ayarları okumak için
