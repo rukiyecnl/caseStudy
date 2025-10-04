@@ -59,10 +59,27 @@ app.get("/api/products", async (req, res) => {
   try {
     const products = JSON.parse(readFileSync("products.json", "utf-8"));
     const goldPrice = await fetchGoldPrice();
-    const productsWithPrice = products.map(p => ({
+
+    const { minPrice, maxPrice, minPopularity, maxPopularity } = req.query;
+
+    let productsWithPrice = products.map(p => ({
       ...p,
       priceUSD: calculatePrice(p.popularityScore, p.weight, goldPrice)
     }));
+
+    if (minPrice) {
+      productsWithPrice = productsWithPrice.filter(p => p.priceUSD >= Number(minPrice));
+    }
+    if (maxPrice) {
+      productsWithPrice = productsWithPrice.filter(p => p.priceUSD <= Number(maxPrice));
+    }
+    if (minPopularity) {
+      productsWithPrice = productsWithPrice.filter(p => p.popularityScore * 5 >= Number(minPopularity));
+    }
+    if (maxPopularity) {
+      productsWithPrice = productsWithPrice.filter(p => p.popularityScore * 5 <= Number(maxPopularity));
+    }
+
     console.log("/api/products çağrıldı, products:", productsWithPrice);
     res.json({ goldPricePerGram: goldPrice, products: productsWithPrice });
   } catch (err) {
