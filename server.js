@@ -2,12 +2,12 @@ import express from "express";
 import { readFileSync } from "fs";
 import axios from "axios";
 import dotenv from "dotenv";
+import cors from "cors";
+
 dotenv.config();
 
 const app = express();
 const PORT = 4000;
-
-// Sabit test altın fiyatı (USD/gram)
 
 // Altın fiyatı cache için
 let goldCache = { pricePerGram: null, ts: 0 };
@@ -25,26 +25,31 @@ async function fetchGoldPrice() {
     });
 
     /*
-    const pricePerOunce = resp.data.price; // ounce başına USD
+    const pricePerOunce = resp.data.price; 
+    // 1 troy ounce = 31.1034768 gram
     const pricePerGram = pricePerOunce / 31.1034768;
     goldCache = { pricePerGram, ts: now };
     */
+
     const pricePerGram = resp.data.price_gram_24k;
     goldCache = { pricePerGram, ts: now };
     console.log("Altın fiyatı (USD/gram):", pricePerGram);
-    
+
     return pricePerGram;
   } catch (err) {
     console.error("Altın fiyatı alınamadı:", err.message);
-    return 120; // fallback
+    return 120; 
   }
 }
-
 
 function calculatePrice(popularityScore, weight, goldPrice) {
   const result = (popularityScore + 1) * weight * goldPrice;
   return Number(result.toFixed(2));
 }
+
+app.use(cors({
+  origin: "*"   // Geliştirme için açık
+}));
 
 // Root endpoint
 app.get("/", (req, res) => res.send("Hello minimal backend!"));
