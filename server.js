@@ -7,7 +7,7 @@ import cors from "cors";
 dotenv.config();
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT;
 
 // Altın fiyatı cache için
 let goldCache = { pricePerGram: null, ts: 0 };
